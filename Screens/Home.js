@@ -1,10 +1,9 @@
 import React, {useState,useEffect} from 'react'
-import { SafeAreaView ,StyleSheet, ScrollView, Text, View, StatusBar, Dimensions,Image,FlatList, TextInput,TouchableOpacity,Keyboard, Pressable,ActivityIndicator} from 'react-native';
+import { SafeAreaView ,StyleSheet, ScrollView, Text, View, StatusBar, Dimensions,Image,FlatList, TextInput,TouchableOpacity,Keyboard, Pressable,ActivityIndicator,Button} from 'react-native';
 import {firebase} from '../config';
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-
-
+import firestore from '@react-native-firebase/firestore';
 
 
 const images =[
@@ -18,13 +17,38 @@ const WIDTH= Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
 
-const Home = ()=> {
+const Home = ({navigation: nav})=> {
     const[todos, setTodos]=useState([]);
-    const todoRef = firebase.firestore().collection('todos');
+    const todoRef = firebase.firestore().collection('hastane');
     const [addData, setAddData] = useState('');
     const navigation = useNavigation();
     
+    const [loading, setLoading] = useState(true); 
+    const [hastane, sethastane] = useState([]);
+
+
     const[imgActive, setimgActive] = useState(0);
+
+    useEffect (() => { 
+        todoRef
+            .onSnapshot(querySnapshot => {
+                const hastane = [];
+                querySnapshot.forEach (documentSnapshot=> {
+                    hastane.push({
+                        ...documentSnapshot.data(),
+                        key:documentSnapshot.id,
+                    });
+
+                });
+                sethastane(hastane);
+                setLoading (false);
+            });
+            return()=> subscriber();
+    },[]);
+
+    if(loading){
+        return<ActivityIndicator/>
+    }
 
     const onchange = (nativeEvent) => {
         if(nativeEvent){
@@ -35,8 +59,8 @@ const Home = ()=> {
         }
     }
 
-
-    useEffect (()=> {
+    
+    /*useEffect (()=> {
        todoRef
         .orderBy('createdAt', 'desc') 
         .onSnapshot(
@@ -53,25 +77,7 @@ const Home = ()=> {
             }
         )
     }, [])
-
-    const addTodo=()=>{
-        if(addData && addData.length > 0){
-            const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-            const data = {
-                heading : addData,
-                createdAt: timestamp
-            };
-            todoRef
-                .add(data)
-                .then(()=>{
-                    setAddData('');
-                    Keyboard.dismiss();
-                })
-                .catch((error)=>{
-                    alert(error);
-                })
-        }
-    }
+    */
 
     return(
         <SafeAreaView style={styles. container}>
@@ -108,46 +114,30 @@ const Home = ()=> {
                 </View>
             </View>
             <View style ={{flex:1}}>
-                <View style={styles.formcontainer}>
-                    <TextInput
-                        style={styles.input}
-                        placeholder='Add A New Todo'
-                        placeholderTextColor='#aaaaaa'
-                        onChangeText={(heading) => setAddData(heading)}
-                        value={addData}
-                        underlineColorAndroid='transparent'
-                        autoCapitalize='none'
-                    />
-                    <TouchableOpacity style={styles.button} onPress={addTodo}>
-                        <Text style={styles.buttonText}>Add</Text>
-                    </TouchableOpacity>
-                </View>
-                <FlatList
-                    data = {todos}
-                    numColumns={1}
-                    renderItem={({item})=>(
-                        <View>
-                            <Pressable
-                                style={styles.container }
-                                onPress={()=>navigation.navigate('Detail',{item})}
-                            >   
-                                <View style={styles.innerContainer}>
-                                    <Text style={styles.itemHeading}>
-                                        {item.heading[0].toUpperCase()+item.heading.slice(1)}
-                                    </Text>
-                                </View>
-                            </Pressable>
 
+                <FlatList
+                    horizontal
+                    data = {hastane}
+                    keyExtractor={(item) => item.key.toString()}
+
+                    renderItem={({item})=>(
+                        <View style={styles.itemContainer}>
+                            <Image style={styles.image} source={{ uri: item.imageURL }} />
+                            <Text style={styles.itemTitle}>{item.title}</Text>
                         </View>
                     )}
                 >
                 </FlatList>
+            </View>
+            <View style={styles.container}>
+                <Button title="Randevu Al" onPress={() => nav.navigate('CreateAppointment')} />
             </View>
         </SafeAreaView>
         
     )
 
 }
+
 export default Home
 
 const styles = StyleSheet.create({
@@ -157,25 +147,36 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'flex-start',
       },*/
-      wrap:{
+    wrap:{
         width:WIDTH,
         height:HEIGHT*0.25,
-      },
-      wrapDot:{
+    },
+    wrapDot:{
         position:'absolute',
         buttom:0,
         flexDirection:'row',
         alignSelf: 'center'
-      },
-      dotActive:{
+    },
+    dotActive:{
         margin: 3,
         color: 'black',
-      },
-      dot:{
+    },
+    dot:{
         margin:3,
         color:'white'
-      },
-
+    },
+    itemContainer: {
+        padding: 10,
+        marginBottom: 10,
+        backgroundColor: '#f0f0f0',
+        borderRadius: 10,
+    },
+    image: {
+        width: '100%',
+        height: 200,
+        borderRadius: 10,
+        marginBottom: 10,
+    },
     container:{
         backgroundColor:'#e5e5e5e',
         padding:15,
