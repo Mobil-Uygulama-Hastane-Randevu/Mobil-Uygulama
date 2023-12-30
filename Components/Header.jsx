@@ -24,8 +24,8 @@ export default Header;
 
 const styles = StyleSheet.create({
     header:{
-        height: 60,
-        width: '100%',
+        height: 80,
+        width: '120%',
         flexDirection: 'row',
         backgroundColor: '#fff',
         elevation: 5,

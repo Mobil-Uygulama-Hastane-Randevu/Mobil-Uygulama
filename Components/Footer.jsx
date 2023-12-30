@@ -37,6 +37,7 @@ const Footer = () => {
         </TouchableOpacity>
       </View>
     </View>
+    
   );
 };
 
@@ -46,10 +47,11 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
+    top:750,
     backgroundColor: '#3498db',
     borderTopWidth: 2,
     borderTopColor: '#2980b9',
-    height: '7%', 
+    height: '15%', 
   },
   footerContent: {
     flexDirection: 'row',

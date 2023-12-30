@@ -5,6 +5,8 @@ import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 
+import Footer from '../Components/Footer'; // Footer component'inin bulunduğu dizini doğru şekilde güncelleyin
+import Header from '../Components/Header';
 
 const images =[
   'https://www.sigortadunyasi.com.tr/wp-content/uploads/2021/01/saglik-1.jpg',
@@ -81,6 +83,8 @@ const Home = ({navigation: nav})=> {
 
     return(
         <SafeAreaView style={styles. container}>
+            <Header title={'DoctorApp'} icon={require('../assets/logo.png')} />
+
             <View style={styles.wrap}>
                 <ScrollView
                 onScroll={({nativeEvent} ) => onchange (nativeEvent)}
@@ -132,6 +136,8 @@ const Home = ({navigation: nav})=> {
             <View style={styles.container}>
                 <Button title="Randevu Al" onPress={() => nav.navigate('CreateAppointment')} />
             </View>
+            <Footer />
+
         </SafeAreaView>
         
     )
