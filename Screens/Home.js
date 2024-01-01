@@ -1,6 +1,6 @@
 import React, {useState,useEffect} from 'react'
 import { SafeAreaView ,StyleSheet, ScrollView, Text, View, StatusBar, Dimensions,Image,FlatList, TextInput,TouchableOpacity,Keyboard, Pressable,ActivityIndicator,Button} from 'react-native';
-import {firebase} from '../config';
+import { firebase } from '../loginConfig.js'; // Dosya uzantısını ekledik
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
@@ -19,34 +19,40 @@ const WIDTH= Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
 
-const Home = ({navigation: nav})=> {
-    const[todos, setTodos]=useState([]);
-    const todoRef = firebase.firestore().collection('hastane');
-    const [addData, setAddData] = useState('');
+const Home = ({navigation: nav})=> {   
     const navigation = useNavigation();
     
     const [loading, setLoading] = useState(true); 
-    const [hastane, sethastane] = useState([]);
-
-
+    const [hastane,setHastane] = useState([]);
     const[imgActive, setimgActive] = useState(0);
 
-    useEffect (() => { 
-        todoRef
-            .onSnapshot(querySnapshot => {
-                const hastane = [];
-                querySnapshot.forEach (documentSnapshot=> {
-                    hastane.push({
-                        ...documentSnapshot.data(),
-                        key:documentSnapshot.id,
-                    });
+    useEffect(() => {
+        const todoRef = firebase.firestore().collection('hastane');
+        const unsubscribe = todoRef.onSnapshot(
+            (querySnapshot) => {
+              const hastaneData = querySnapshot.docs.map((doc) => ({
+                ...doc.data(),
+                key: doc.id,
+              }));
+              setHastane(hastaneData);
+              setLoading(false);
+            },
+            (error) => {
+              console.error('Veri alma hatası:', error);
+              setLoading(false);
+            }
+        );
+      
+        return unsubscribe;
+    }, []);
 
-                });
-                sethastane(hastane);
-                setLoading (false);
-            });
-            return()=> subscriber();
-    },[]);
+    const renderItem = ({ item }) => (
+        <View style={styles.itemContainer}>
+          <Image style={styles.image} source={{ uri: item.imageURL }} />
+          <Text style={styles.itemTitle}>{item.title}</Text>
+        </View>
+    );
+    
 
     if(loading){
         return<ActivityIndicator/>
@@ -124,10 +130,13 @@ const Home = ({navigation: nav})=> {
                     data = {hastane}
                     keyExtractor={(item) => item.key.toString()}
 
-                    renderItem={({item})=>(
-                        <View style={styles.itemContainer}>
-                            <Image style={styles.image} source={{ uri: item.imageURL }} />
-                            <Text style={styles.itemTitle}>{item.title}</Text>
+                    renderItem={({ item }) => (
+                        console.log(item.title),
+                        <View>
+                          <Text>{item.title}</Text>
+                          <Image>{}</Image>
+                          {/* Diğer özellikleri de ekle */}
+
                         </View>
                     )}
                 >
@@ -136,8 +145,7 @@ const Home = ({navigation: nav})=> {
             <View style={styles.container}>
                 <Button title="Randevu Al" onPress={() => nav.navigate('CreateAppointment')} />
             </View>
-            <Footer />
-
+            <Footer/>
         </SafeAreaView>
         
     )
@@ -201,6 +209,12 @@ const styles = StyleSheet.create({
         fontWeight:'bold',
         fontSize:18,
         marginRight:22,
+    },
+    itemTitle: {
+        marginTop: 5,
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#333',
     },
     formContainer: {
         flexDirection: 'row',

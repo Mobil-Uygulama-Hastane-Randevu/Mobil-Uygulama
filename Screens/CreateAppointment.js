@@ -1,10 +1,17 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet,TouchableOpacity,ScrollView ,Image} from 'react-native';
+import { Dimensions ,View, Text, TextInput, Button, StyleSheet,TouchableOpacity,ScrollView ,Image} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import { Picker } from '@react-native-picker/picker'; // Picker'ı doğru yerden import edin
 //import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { Calendar } from 'react-native-calendars';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Kullanacağınız ikon kütüphanesine göre bu import değişebilir
+
+import Footer from '../Components/Footer'; // Footer component'inin bulunduğu dizini doğru şekilde güncelleyin
+import Header from '../Components/Header';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+const WIDTH = Dimensions.get('window').width;
+const HEIGHT = Dimensions.get('window').height;
 
 
 const CreateAppointment = () => {
@@ -61,12 +68,9 @@ const CreateAppointment = () => {
 
 
   return (
-    <ScrollView
-      contentContainerStyle={{ flex: 1}}
-      horizontal
-      showsHorizontalScrollIndicator={false}
-    >
       <View style={styles.container}>
+        <Header title={'DoctorApp'} icon={require('../assets/logo.png')} />
+
         <Picker
           selectedValue={selectedHospital}
           onValueChange={(itemValue) => setSelectedHospital(itemValue)}
@@ -82,6 +86,8 @@ const CreateAppointment = () => {
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.clinicsContainer}
+          enabled={true}
+
         >
           {clinics.map((clinic) => (
             <TouchableOpacity
@@ -131,7 +137,7 @@ const CreateAppointment = () => {
         </ScrollView>
 
         <ScrollView
-          
+          horizontal
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.doctorsContainer}
         >
@@ -146,13 +152,9 @@ const CreateAppointment = () => {
             </TouchableOpacity>
           ))}
         </ScrollView>
-
-
-       
-
         <Button title="Randevu Oluştur" onPress={saveAppointment} />
+
       </View>
-    </ScrollView>
   );
 };
 
@@ -174,6 +176,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   clinicsContainer: {
+    
     marginTop: 20,
   },
   clinicBox: {
@@ -249,6 +252,7 @@ const styles = StyleSheet.create({
   },
   doctorBox: {
     width: 120,
+    height:120,
     marginRight: 10,
     alignItems: 'center',
   },
