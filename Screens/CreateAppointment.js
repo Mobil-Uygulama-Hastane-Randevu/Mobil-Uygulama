@@ -5,6 +5,7 @@ import { Picker } from '@react-native-picker/picker'; // Picker'ı doğru yerden
 //import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { Calendar } from 'react-native-calendars';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Kullanacağınız ikon kütüphanesine göre bu import değişebilir
+import { firebase } from '../loginConfig';  // Firebase konfigürasyonunuza göre güncelleyin
 
 import Footer from '../Components/Footer'; // Footer component'inin bulunduğu dizini doğru şekilde güncelleyin
 import Header from '../Components/Header';
@@ -51,21 +52,34 @@ const CreateAppointment = () => {
 
   const saveAppointment = async () => {
     try {
-      // Firebase'e randevu bilgilerini kaydet
-      await firestore().collection('appointments').add({
+      const user = firebase.auth().currentUser;
+  
+      if (!user) {
+        console.error('Kullanıcı oturumu açık değil.');
+        return;
+      }
+  
+      const appointmentData = {
         hospital: selectedHospital,
         clinic: selectedClinic,
         date: selectedDate,
         time: selectedTime,
         patientName: patientName,
-      });
-
+        doctorId: selectedDoctor,
+        userId: user.uid,
+      };
+  
+      // Firestore'e randevu bilgilerini kaydet
+      const appointmentRef = await firestore().collection('randevu').add(appointmentData);
+  
+      console.log('Randevu başarıyla kaydedildi. Randevu ID:', appointmentRef.id);
+  
       // Randevu kaydedildikten sonra kullanıcıyı başka bir sayfaya yönlendirme vb. işlemler yapabilirsiniz.
     } catch (error) {
       console.error('Randevu kaydetme hatası:', error);
     }
   };
-
+  
 
   return (
       <View style={styles.container}>

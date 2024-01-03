@@ -48,7 +48,7 @@ const Home = ({navigation: nav})=> {
 
     const renderItem = ({ item }) => (
         <View style={styles.itemContainer}>
-          <Image style={styles.image} source={{ uri: item.imageURL }} />
+          <Image style={styles.image} source={{ uri: item.imgUrl }} />
           <Text style={styles.itemTitle}>{item.title}</Text>
         </View>
     );
@@ -132,15 +132,14 @@ const Home = ({navigation: nav})=> {
 
                     renderItem={({ item }) => (
                         console.log(item.title),
-                        <View>
-                          <Text>{item.title}</Text>
-                          <Image>{}</Image>
-                          {/* Diğer özellikleri de ekle */}
-
+                        console.log(item.imgUrl),
+                        <View style={styles.itemContainer}>
+                        <Image style={styles.image} source={{ uri: item.imgUrl }} />
+                        <Text style={styles.itemTitle}>{item.title}</Text>
                         </View>
                     )}
-                >
-                </FlatList>
+                />
+
             </View>
             <View style={styles.container}>
                 <Button title="Randevu Al" onPress={() => nav.navigate('CreateAppointment')} />
