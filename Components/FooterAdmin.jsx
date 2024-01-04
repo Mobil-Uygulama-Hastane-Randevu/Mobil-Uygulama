@@ -5,12 +5,8 @@ import { useNavigation } from '@react-navigation/native';
 const Footer = () => {
   const navigation = useNavigation();
 
-  const navigateToHome = () => {
-    navigation.navigate('Home');
-  };
-
   const navigateToRandevu = () => {
-    navigation.navigate('Appointment');
+    navigation.navigate('DoctorAppointment');
   };
 
   const navigateToProfil = () => {
@@ -20,9 +16,6 @@ const Footer = () => {
   return (
     <View style={styles.footerContainer}>
       <View style={styles.footerContent}>
-        <TouchableOpacity style={styles.footerButton} onPress={navigateToHome}>
-          <Text style={styles.buttonText}>Anasayfa</Text>
-        </TouchableOpacity>
 
         <View style={styles.separator} />
 

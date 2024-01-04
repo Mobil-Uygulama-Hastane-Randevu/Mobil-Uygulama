@@ -1,139 +1,193 @@
-import React, {useState,useEffect } from 'react'
-import { SafeAreaView ,StyleSheet, ScrollView, Text, View, StatusBar, Dimensions,Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import 'react-native-gesture-handler';
-import { firebase } from './loginConfig.js';
+import { StyleSheet, ScrollView, Text, View, StatusBar, Dimensions, Image, FlatList, TextInput, TouchableOpacity, Keyboard, Pressable, ActivityIndicator, Button } from 'react-native';
 
+import { createStackNavigator } from '@react-navigation/stack';
+import { SafeAreaView } from 'react-native-safe-area-context';  // Yeni eklenen import
+import React, { useState, useEffect } from 'react';
+import 'react-native-gesture-handler';
+import { firebase } from './config';
+import Login from './Screens/Login';
+import Signin from './Screens/Signin';
 import Home from './Screens/Home';
-import Detail from './Screens/Detail';
+import Profile from './Screens/Profile';
+import Appointment from './Screens/Appointment';
+import DoctorAppointment from './Screens/DoctorAppointment';
 import CreateAppointment from './Screens/CreateAppointment';
-import Randevu from './Screens/Randevu';
-import Profil from './Screens/Profil';
-import Footer from './Components/Footer'; // Footer component'inin bulunduğu dizini doğru şekilde güncelleyin
-import Header from './Components/Header'; // Footer component'inin bulunduğu dizini doğru şekilde güncelleyin
-import Login from './Screens/Login.js'
-import Signin from './Screens/Signin.js'
+//import assets from './assets'
+
+import Footer from './Components/Footer';
+import FooterAdmin from './Components/FooterAdmin';
 
 
 const Stack = createStackNavigator();
 
-
 function App() {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
+  const [isAdmin, setIsAdmin] = useState(false); // Admin durumunu takip etmek için yeni bir state değişkeni
 
-  //Handle user state changes
+  // Kullanıcı durumu değişikliklerini ele al
   function onAuthStateChanged(user) {
-      setUser(user);
-      if (initializing) setInitializing(false);
+    setUser(user);
+
+    if (user) {
+      // Eğer kullanıcı varsa, admin durumunu kontrol et
+      firebase.firestore().collection('users').doc(user.uid).get()
+        .then((userSnapshot) => {
+          const userData = userSnapshot.data();
+          setIsAdmin(userData.isAdmin);
+        })
+        .catch((error) => {
+          console.error('Kullanıcı verileri alınırken hata oluştu:', error);
+        });
+    }
+
+    if (initializing) setInitializing(false);
   }
 
   useEffect(() => {
-      const subscriber = firebase.auth().onAuthStateChanged(onAuthStateChanged);
-      return subscriber;
+    const subscriber = firebase.auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber;
   }, []);
 
-  
   if (initializing) return null;
 
-  if (!user) {
-      return (
-          <Stack.Navigator>
-              <Stack.Screen
-                  name="Login"
-                  component={Login}
-                  
-              />
 
-              <Stack.Screen
-                  name="Signin"
-                  component={Signin}
-                  
-              />
-              
-              
-
-          </Stack.Navigator>
-      );
-  }
   return (
-      <Stack.Navigator screenOptions={{headerShown : false}}>
+    <NavigationContainer>
+      <Stack.Navigator>
+        {user ? (
+          isAdmin ? (
+            <Stack.Screen
+              name="DoctorAppointment"
+              component={DoctorAppointment}
+              options={{
+                headerTitle: () => (
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Image
+                      source={require('./assets/logo.jpg')}
+                      style={{ width: 30, height: 30, marginRight: 5 }}
+                    />
+                    <Text>DoctorApp</Text>
+                  </View>
+                ),
+                headerTitleAlign: 'center',
+              }}
+            />
+          ) : (
+            <Stack.Screen
+              name="Home"
+              component={Home}
+              options={{
+                headerTitle: () => (
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Image
+                      source={require('./assets/logo.jpg')}
+                      style={{ width: 30, height: 30, marginRight: 5 }}
+                    />
+                    <Text>DoctorApp</Text>
+                  </View>
+                ),
+                headerTitleAlign: 'center',
+              }}
+            />
+          )
+        ) : (
+          <Stack.Screen
+            name="Login"
+            component={Login}
+            options={{
+              headerTitle: () => (
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Image
+                    source={require('./assets/logo.jpg')}
+                    style={{ width: 30, height: 30, marginRight: 5 }}
+                  />
+                  <Text>DoctorApp</Text>
+                </View>
+              ),
+              headerTitleAlign: 'center',
+            }}
+          />
+          
+        )}
+        <Stack.Screen name="Signin" component={Signin}
+          options={{
+            headerTitle: () => (
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Image
+                  source={require('./assets/logo.jpg')}
+                  style={{ width: 30, height: 30, marginRight: 5 }}
+                />
+                <Text>DoctorApp</Text>
+              </View>
+            ),
+            headerTitleAlign: 'center',
+          }} />
+
 
         <Stack.Screen
-          name ='Home'
-          component={Home} 
+          name="Profile" component={Profile}
+          options={{
+            headerTitle: () => (
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Image
+                  source={require('./assets/logo.jpg')}
+                  style={{ width: 30, height: 30, marginRight: 5 }}
+                />
+                <Text>DoctorApp</Text>
+              </View>
+
+            ),
+            headerTitleAlign: 'center',
+          }}
         />
+       
+
+
         <Stack.Screen
-          name='Details'
-          component={Detail}
+          name="CreateAppointment" component={CreateAppointment}
+          options={{
+            headerTitle: () => (
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Image
+                  source={require('./assets/logo.jpg')}
+                  style={{ width: 30, height: 30, marginRight: 5 }}
+                />
+                <Text>DoctorApp</Text>
+              </View>
+            ),
+            headerTitleAlign: 'center',
+          }}
         />
-        <Stack.Screen 
-          name="CreateAppointment" 
-          component={CreateAppointment} 
-        />
-        <Stack.Screen 
-          name="Randevu" 
-          component={Randevu} 
-        />
-        <Stack.Screen 
-          name="Profil" 
-          component={Profil} 
-        />
-
-      </Stack.Navigator>
-
-  )
-};
-  export default () => {
-    return (
-        <NavigationContainer>
-          <App/>
-        </NavigationContainer>
-
-    )
-}
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-});
-
-/*
-
-export default function App() {
-  
-  return (
-      <NavigationContainer style={styles.container}> 
-            <Header title={'DoctorApp'} icon={require('./assets/logo.png')}/>
-            <Stack.Navigator screenOptions={{headerShown : false}}>
-              
-              <Stack.Screen
-                name ='Home'
-                component={Home}
-              />
-              <Stack.Screen
-                name='Details'
-                component={Detail}
-              />
-              <Stack.Screen 
-                name="CreateAppointment" 
-                component={CreateAppointment} 
-              />
-              <Stack.Screen 
-                name="Randevu" 
-                component={Randevu} 
-              />
-              <Stack.Screen 
-                name="Profil" 
-                component={Profil} 
-              />
-            </Stack.Navigator>
-            <Footer />
         
-      </NavigationContainer>
+
+
+        <Stack.Screen name="Appointment" component={Appointment}
+          options={{
+            headerTitle: () => (
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Image
+                  source={require('./assets/logo.jpg')}
+                  style={{ width: 30, height: 30, marginRight: 5 }}
+                />
+                <Text>DoctorApp</Text>
+              </View>
+
+            ),
+            headerTitleAlign: 'center',
+            
+          }}
+          
+        />
+       
+      </Stack.Navigator>
+      
+      {user && !isAdmin && <Footer />}   
+      {user && isAdmin && <FooterAdmin />}   
+
+       </NavigationContainer>
   );
-};*/
+}
+
+export default App;

@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert,TouchableOpacity } from 'react-native';
-import { firebase } from '../loginConfig'; // Firebase konfigürasyonunuza göre düzenleyin
-import { RadioButton } from 'react-native-paper';
-import { Picker } from '@react-native-picker/picker'; // Picker'ı doğru yerden import edin
+import { firebase } from '../config'; // Firebase konfigürasyonunuza göre düzenleyin
 
 import Footer from '../Components/Footer'; // Footer component'inin bulunduğu dizini doğru şekilde güncelleyin
 import Header from '../Components/Header';
+import { ScrollView } from 'react-native-gesture-handler';
 
-const Profil = ({ navigation }) => {
+const Profile = ({ navigation }) => {
   const user = firebase.auth().currentUser;
   const [isEditMode, setEditMode] = useState(false);
 
@@ -73,22 +72,12 @@ const Profil = ({ navigation }) => {
       .catch((error) => {
         console.error('Çıkış yapılırken bir hata oluştu:', error);
       });
-
-      const isPhoneValid = () => {
-        // Telefon numarası doğrulama mantığı buraya gelecek
-        return true; // Örnek: Her zaman geçerli olduğunu varsayalım
-      };
-
-      if (!isPhoneValid()) {
-        Alert.alert('Geçersiz telefon numarası');
-        return;
-      }
   };
 
   return (
+    <ScrollView>
     <View style={styles.container}>
-      <Header title={'DoctorApp'} icon={require('../assets/logo.png')} />
-
+      
       <Text style={styles.label}>Ad:</Text>
       <TextInput
         style={styles.input}
@@ -160,9 +149,8 @@ const Profil = ({ navigation }) => {
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.buttonText}>Çıkış Yap</Text>
       </TouchableOpacity>
-      <Footer/>
-
     </View>
+    </ScrollView>
   );
 };
 
@@ -210,4 +198,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Profil;
+export default Profile;
