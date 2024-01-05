@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   updateButton: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#4CAF55',
     padding: 10,
     borderRadius: 8,
     marginTop: 10,
