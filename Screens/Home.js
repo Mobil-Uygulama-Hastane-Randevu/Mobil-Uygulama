@@ -30,7 +30,7 @@ const images = [
 
 const staticHastaneData = [
     { key: '1', title: 'Serdivan Devlet Hastanesi', imgUrl: 'https://static.daktilo.com/sites/243/uploads/2023/08/15/serdivan-devlet-hastanesi-1.jpg' },
-    { key: '2', title: 'Sakarya Eğitim Araştırma', imgUrl: 'https://static.daktilo.com/sites/243/uploads/2020/08/11/large/sakarya-egitim-ve-arastirma-hastanesi-13-1597129000.jpg' },
+    { key: '2', title: 'Sakarya Eğitim Araştirma', imgUrl: 'https://static.daktilo.com/sites/243/uploads/2020/08/11/large/sakarya-egitim-ve-arastirma-hastanesi-13-1597129000.jpg' },
     { key: '3', title: 'Toyota Hastanesi', imgUrl: '' },
 
     // ... diğer hastane verileri
