@@ -20,7 +20,7 @@ const Footer = () => {
         <View style={styles.separator} />
 
         <TouchableOpacity style={styles.footerButton} onPress={navigateToRandevu}>
-          <Text style={styles.buttonText}>Randevularım</Text>
+          <Text style={styles.buttonText}>Randevularİm</Text>
         </TouchableOpacity>
 
         <View style={styles.separator} />
